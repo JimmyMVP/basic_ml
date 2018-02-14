@@ -5,14 +5,14 @@ import scipy
 np.random.seed(666)
 
 DATASET_SIZE = 1000
-CLASSES = np.arange(0,2)
+CLASSES = np.arange(0,3)
 INPUTS = np.arange(0,5)
 
 print("Possible classes: ", CLASSES)
 
 #Create random dataset
 X = np.random.choice(INPUTS,DATASET_SIZE)
-Y = np.random.choice(CLASSES, DATASET_SIZE)
+Y = np.random.choice(CLASSES, DATASET_SIZE, p=[0.2, 0.5, 0.3])
 
 #Calculate prior
 prior = np.zeros(CLASSES.shape, dtype=np.float32)
@@ -55,7 +55,21 @@ def maximum_aposteriori(x, log_likelihood,  log_prior, classes):
     return prob_x
 
 
-print("Example likelihood for x=2: ", maximum_aposteriori(2, log_likelihood, log_prior, CLASSES))
+def maximum_likelihood(x, log_likelihood, classes):
+    prob_x = np.zeros(classes.shape)
+    for c in classes:
+        prob_x[c] = log_likelihood[x, c]
+
+    return prob_x
+
+
+log_likelihood_map = maximum_aposteriori(2, log_likelihood, log_prior, CLASSES)
+log_likelihood_ml = maximum_likelihood(2, log_likelihood, CLASSES)
+likelihood_map = np.e**log_likelihood_map
+likelihood_ml = np.e**log_likelihood_ml
+
+print("Example MAP (log)likelihood for x=2: ", likelihood_map, log_likelihood_map )
+print("Example ML  (log)likelihood for x=2: ", likelihood_ml, log_likelihood_ml )
 
 
 
